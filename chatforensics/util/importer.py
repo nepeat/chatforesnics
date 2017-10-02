@@ -4,7 +4,7 @@ import operator
 
 from sqlalchemy import func
 
-from chatforensics.model import sm, ChatUser, Chat, Message
+from chatforensics.model import sm, ChatUser, Chat, Message, ChatEvent
 from chatforensics.chathandlers import ALL_HANDLERS
 
 state = {
@@ -60,8 +60,16 @@ def import_file(db, filename: str):
             insert_or_update(db, Chat, chat, True)
         db.commit()
 
+
+        # Slightly more complicated since messages are the biggest load on the DB and sometimes events are returned.
         for message in file_handler.messages:
-            message_bulk.append(message)
+            if isinstance(message, ChatEvent):
+                insert_or_update(db, ChatEvent, message)
+                continue
+            else:
+                message_bulk.append(message)
+
+            # Flush the bulk when we have 1024 messages in it.
             if len(message_bulk) > 1024:
                 insert_or_update(db, Message, message_bulk)
                 message_bulk = []

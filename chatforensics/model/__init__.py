@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker, relation
 from sqlalchemy.schema import Index
 
-from chatforensics.model.types import BackendType
+from chatforensics.model.types import BackendType, ChatEventType
 
 debug = os.environ.get('DEBUG', False)
 
@@ -39,6 +39,20 @@ class Chat(Base):
     extra_meta = Column(JSONB)
 
 
+class ChatEvent(Base):
+    __tablename__ = 'chat_events'
+
+    id = Column(Integer, primary_key=True)
+    backend_type = Column(Enum(BackendType), nullable=False)
+    backend_uid = Column(String, nullable=False)
+    chat_id = Column(Integer, ForeignKey('chats.id'))
+
+    created_at = Column(DateTime, nullable=False)
+
+    event_type = Column(Enum(ChatEventType))
+    event_meta = Column(JSONB)
+
+
 class ChatUser(Base):
     __tablename__ = 'chat_users'
 
@@ -55,6 +69,7 @@ class Message(Base):
     __tablename__ = 'messages'
 
     id = Column(Integer, primary_key=True)
+    backend_type = Column(Enum(BackendType), nullable=False)
     backend_uid = Column(String)
     chat_id = Column(Integer, ForeignKey('chats.id'))
     chat_user_id = Column(Integer, ForeignKey('chat_users.id'))
@@ -71,8 +86,12 @@ class Message(Base):
 # Indexes
 
 Index("index_unique_chat_uid", Chat.backend_uid, unique=True)
+Index("index_unique_chat_event_uid", ChatEvent.backend_uid, unique=True)
 Index("index_unique_chat_user_uid", ChatUser.backend_uid, unique=True)
 Index("index_unique_message_uid", Message.backend_uid, unique=True)
+
+Index("index_chat_event_uid", ChatEvent.backend_uid)
+Index("index_chat_event_created", ChatEvent.created_at)
 
 Index("index_message_uid", Message.backend_uid)
 Index("index_message_created", Message.created_at)
@@ -81,3 +100,5 @@ Index("index_message_created", Message.created_at)
 
 Message.chat = relation(Chat)
 Message.chat_user = relation(ChatUser)
+
+ChatEvent.chat = relation(Chat)

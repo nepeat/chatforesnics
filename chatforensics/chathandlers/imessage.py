@@ -1,8 +1,8 @@
 import datetime
 
 from chatforensics.chathandlers.base import SQLiteHandlerBase
-from chatforensics.model import ChatUser, Chat, Message
-from chatforensics.model.types import MessageData, BackendType
+from chatforensics.model import ChatUser, Chat, Message, ChatEvent
+from chatforensics.model.types import MessageData, BackendType, ChatEventType
 
 
 IMESSAGE_TABLES = [
@@ -18,6 +18,8 @@ SELECT message.guid AS message_guid,
        message.text AS message_text,
        message.is_from_me AS message_is_from_me,
        message.date AS message_date,
+       message.item_type AS message_item_type,
+       message.group_title AS message_group_title,
        chat.guid AS chat_guid,
        handle.id AS handle_id
 FROM chat
@@ -32,6 +34,7 @@ class iMessageHandler(SQLiteHandlerBase):
         super().__init__(*args, **kwargs)
 
         self.guid_cache = {}
+        self.last_names = {}
 
     def _get_chat(self, guid):
         if guid not in self.guid_cache:
@@ -76,23 +79,43 @@ class iMessageHandler(SQLiteHandlerBase):
             for handle in handle_query:
                 yield Chat(
                     backend_type=BackendType.imessage,
-                    backend_uid=handle.guid
+                    backend_uid=handle.guid,
+                    friendly_name=handle.chat_identifier,
                 )
 
     def message_iter(self):
         with self.db.connect() as db:
             message_query = db.execute(MESSAGE_QUERY)
             for message in message_query:
-                if not message["message_text"]:
-                    continue
-
+                # XXX iOS ?? suddenly made dates very very precise?
                 if message["message_date"] > 5000000000:
                     message_created_at = datetime.datetime.utcfromtimestamp((int(message["message_date"]) / 1000000000) + 978307200)
                 else:
                     message_created_at = datetime.datetime.utcfromtimestamp(int(message["message_date"]) + 978307200)
 
+                # Group name change = 2
+                if message["message_item_type"] == 2:
+                    yield ChatEvent(
+                        backend_uid=message["message_guid"],
+                        backend_type=BackendType.imessage,
+                        chat_id=self._get_chat(message["chat_guid"]).id,
+                        created_at=message_created_at,
+                        event_type=ChatEventType.group_name_change,
+                        event_meta={
+                            "before": self.last_names.get(message["chat_guid"], ""),
+                            "after": message["message_group_title"]
+                        }
+                    )
+                    self.last_names[message["chat_guid"]] = message["message_group_title"]
+                    self._get_chat(message["chat_guid"]).friendly_name = message["message_group_title"]
+                    self.db_app.commit()
+
+                if not message["message_text"]:
+                    continue
+
                 # XXX/HACK Add argument to choose between dict and heavy objects later.
                 yield dict(
+                    backend_type=BackendType.imessage,
                     backend_uid=message["message_guid"],
                     chat_id=self._get_chat(message["chat_guid"]).id,
                     chat_user_id=self._get_chat_user(message["handle_id"]).id,

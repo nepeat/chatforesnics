@@ -6,6 +6,10 @@ class BackendType(enum.Enum):
     skype = 3
 
 
+class ChatEventType(enum.Enum):
+    group_name_change = 1
+
+
 class MessageData:
     __slots__ = ["content", "raw_content", "created_at", "edited_at", "extra_meta"]
 
