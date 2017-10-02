@@ -110,6 +110,11 @@ class iMessageHandler(SQLiteHandlerBase):
                     self._get_chat(message["chat_guid"]).friendly_name = message["message_group_title"]
                     self.db_app.commit()
 
+                # Fill in the chat creation date if not filled in yet.
+                if not self._get_chat(message["chat_guid"]).created_at:
+                    self._get_chat(message["chat_guid"]).created_at = message_created_at
+                    self.db_app.commit()
+
                 if not message["message_text"]:
                     continue
 
