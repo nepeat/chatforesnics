@@ -34,16 +34,18 @@ class iMessageHandler(SQLiteHandlerBase):
         self.guid_cache = {}
 
     def _get_chat(self, guid):
-        result = self.db_app.query(Chat).filter(Chat.backend_uid == guid).scalar()
-        if result:
-            self.guid_cache[guid] = result
+        if guid not in self.guid_cache:
+            result = self.db_app.query(Chat).filter(Chat.backend_uid == guid).scalar()
+            if result:
+                self.guid_cache[guid] = result
 
         return self.guid_cache.get(guid, None)
 
     def _get_chat_user(self, guid):
-        result = self.db_app.query(ChatUser).filter(ChatUser.backend_uid == guid).scalar()
-        if result:
-            self.guid_cache[guid] = result
+        if guid not in self.guid_cache:
+            result = self.db_app.query(ChatUser).filter(ChatUser.backend_uid == guid).scalar()
+            if result:
+                self.guid_cache[guid] = result
 
         return self.guid_cache.get(guid, None)
 
@@ -81,18 +83,22 @@ class iMessageHandler(SQLiteHandlerBase):
         with self.db.connect() as db:
             message_query = db.execute(MESSAGE_QUERY)
             for message in message_query:
+                if not message["message_text"]:
+                    continue
+
                 if message["message_date"] > 5000000000:
                     message_created_at = datetime.datetime.utcfromtimestamp((int(message["message_date"]) / 1000000000) + 978307200)
                 else:
                     message_created_at = datetime.datetime.utcfromtimestamp(int(message["message_date"]) + 978307200)
 
-                yield Message(
+                # XXX/HACK Add argument to choose between dict and heavy objects later.
+                yield dict(
                     backend_uid=message["message_guid"],
                     chat_id=self._get_chat(message["chat_guid"]).id,
                     chat_user_id=self._get_chat_user(message["handle_id"]).id,
                     created_at=message_created_at,
-                    content=message["message_text"] or "",
-                    raw_content=message["message_text"] or "",
+                    content=message["message_text"],
+                    raw_content=message["message_text"],
                     extra_meta={
                         "from_me": message["message_is_from_me"] == 1
                     }

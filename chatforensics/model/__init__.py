@@ -54,8 +54,8 @@ class ChatUser(Base):
 class Message(Base):
     __tablename__ = 'messages'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    backend_uid = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    backend_uid = Column(String)
     chat_id = Column(Integer, ForeignKey('chats.id'))
     chat_user_id = Column(Integer, ForeignKey('chat_users.id'))
 
@@ -70,6 +70,11 @@ class Message(Base):
 
 # Indexes
 
+Index("index_unique_chat_uid", Chat.backend_uid, unique=True)
+Index("index_unique_chat_user_uid", ChatUser.backend_uid, unique=True)
+Index("index_unique_message_uid", Message.backend_uid, unique=True)
+
+Index("index_message_uid", Message.backend_uid)
 Index("index_message_created", Message.created_at)
 
 # Relations
