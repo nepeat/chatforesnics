@@ -93,7 +93,8 @@ Index("index_unique_message_uid", Message.backend_uid, unique=True)
 Index("index_chat_event_uid", ChatEvent.backend_uid)
 Index("index_chat_event_created", ChatEvent.created_at)
 
-Index("index_message_uid", Message.backend_uid)
+Index("index_message_chat_id", Message.chat_id)
+Index("index_message_chat_user_id", Message.chat_user_id)
 Index("index_message_created", Message.created_at)
 
 # Relations
