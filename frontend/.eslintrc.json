@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "react-app",
+    "semistandard"
+  ],
+  "plugins": [
+    "standard",
+    "react"
+  ],
+  "rules": {
+    "camelcase": ["warn"],
+    "brace-style": ["warn"],
+    "no-unused-vars": ["warn", { "vars": "all", "args": "none", "varsIgnorePattern": "^_" }]
+  }
+}

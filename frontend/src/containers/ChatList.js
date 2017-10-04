@@ -1,23 +1,19 @@
 import React, { PureComponent } from 'react';
 
-import ReactTable from "react-table";
+import ReactTable from 'react-table';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 
 import { getChats } from '../actions';
 
 class ChatList extends PureComponent {
-  constructor() {
-    super();
-  }
-
-  componentWillMount() {
+  componentWillMount () {
     if (this.props.chats.length === 0) {
       this.props.getChats();
     }
   }
 
-  render() {
+  render () {
     if (this.props.chats.length === 0) {
       return <h1>Loading</h1>;
     }
@@ -52,7 +48,7 @@ class ChatList extends PureComponent {
                 }
                 this.props.history.push('/chat/' + rowInfo.original.id);
               }
-            }
+            };
           }}
         />;
       </div>

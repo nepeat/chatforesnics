@@ -5,4 +5,4 @@ import messages, * as fromMessages from './messages';
 export default combineReducers({
   chats,
   messages
-})
+});

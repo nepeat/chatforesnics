@@ -1,23 +1,23 @@
 import React, { PureComponent } from 'react';
 
-import ReactTable from "react-table";
+import ReactTable from 'react-table';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 
 import { getMessages } from '../actions';
 
-import Message from '../components/message.js'
+import Message from '../components/message.js';
 
 class ChatView extends PureComponent {
-  componentWillMount() {
+  componentWillMount () {
     this.props.getMessages(this.props.match.params.chat_id);
   }
 
-  render() {
+  render () {
     if (this.props.messages.length === 0) {
       return <h1>Loading</h1>;
     }
-    
+
     let lastSender;
     let senderChange = false;
 

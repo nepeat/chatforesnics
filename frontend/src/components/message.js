@@ -6,7 +6,7 @@ export default ({ message, senderChange, lastSender }) => {
   let prependedExtras = [];
 
   if (senderChange) {
-    prependedExtras.push(<h1 className='sender'>{lastSender}</h1>)
+    prependedExtras.push(<h1 className='sender'>{lastSender}</h1>);
   }
 
   return <div className='message'>
@@ -14,4 +14,4 @@ export default ({ message, senderChange, lastSender }) => {
     <span className='created'>{message.created}</span>
     <span className='content'>{message.content}</span>
   </div>;
-}
+};

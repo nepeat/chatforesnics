@@ -12,7 +12,7 @@ import 'react-table/react-table.css';
 import './App.css';
 
 class App extends Component {
-  render() {
+  render () {
     return (
       <Router>
         <div className="app">
@@ -25,4 +25,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default App;

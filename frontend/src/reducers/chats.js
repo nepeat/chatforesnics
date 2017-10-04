@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 import {
   RECIEVE_CHATS
-} from '../constants/ActionTypes'
+} from '../constants/ActionTypes';
 
 const initialState = [];
 
@@ -14,6 +14,6 @@ const chats = (state = initialState, action) => {
     default:
       return state;
   }
-}
+};
 
 export default chats;

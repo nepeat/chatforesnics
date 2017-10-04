@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 import {
   RECIEVE_MESSAGES
-} from '../constants/ActionTypes'
+} from '../constants/ActionTypes';
 
 const initialState = [];
 
@@ -13,6 +13,6 @@ const messages = (state = initialState, action) => {
     default:
       return state;
   }
-}
+};
 
 export default messages;
