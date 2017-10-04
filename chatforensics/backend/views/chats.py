@@ -1,6 +1,4 @@
 # coding=utf-8
-import uuid
-
 from flask import g, request
 from flask_restplus import Namespace, abort, fields
 
@@ -35,7 +33,7 @@ class ChatListResource(ResourceBase):
         for chat in db_chats:
             all_chats.append({
                 "id": chat.id,
-                "name": str(uuid.uuid4()) or chat.friendly_name or chat.backend_uid,
+                "name": chat.friendly_name or chat.backend_uid,
                 "created": chat.created_at,
                 "messages": get_chat_message_count(chat.id)
             })
