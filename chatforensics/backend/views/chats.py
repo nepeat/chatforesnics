@@ -1,4 +1,5 @@
 # coding=utf-8
+import uuid
 
 from flask import g, request
 from flask_restplus import Namespace, abort, fields
@@ -13,12 +14,16 @@ ns = Namespace("chats", "Chat info/messages")
 chat_list_item_model = ns.model("ChatListItem", {
     "id": fields.String,
     "name": fields.String,
+    "created": fields.DateTime,
     "messages": fields.Integer
 })
 
 chat_list_model = ns.model("ChatList", {
     "chats": fields.List(fields.Nested(chat_list_item_model))
 })
+
+def get_chat_message_count(chat_id):
+    return g.db.query(func.count("*")).select_from(Message).filter(Message.chat_id == chat_id).scalar()
 
 @ns.route("/")
 class ChatListResource(ResourceBase):
@@ -30,8 +35,9 @@ class ChatListResource(ResourceBase):
         for chat in db_chats:
             all_chats.append({
                 "id": chat.id,
-                "name": chat.friendly_name or chat.backend_uid,
-                "messages": g.db.query(func.count("*")).select_from(Message).filter(Message.chat_id == chat.id).scalar()
+                "name": str(uuid.uuid4()) or chat.friendly_name or chat.backend_uid,
+                "created": chat.created_at,
+                "messages": get_chat_message_count(chat.id)
             })
 
         return {
@@ -42,7 +48,7 @@ class ChatListResource(ResourceBase):
 @ns.route("/<int:chat_id>")
 class ChatInfoResource(ResourceBase):
     @ns.marshal_with(chat_list_model)
-    def get(self):
+    def get(self, chat_id):
         db_chats = g.db.query(Chat).order_by(Chat.id).all()
 
         all_chats = []
@@ -54,5 +60,5 @@ class ChatInfoResource(ResourceBase):
             })
 
         return {
-            "chats": all_chats,
+            "messages": get_chat_message_count(chat.id)
         }
