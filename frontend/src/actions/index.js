@@ -7,9 +7,7 @@ const receiveChats = chats => ({
 });
 
 export const getChats = () => dispatch => {
-  let dataRequest = new Request('http://localhost:5000/api/chats/', {
-    mode: 'cors'
-  });
+  let dataRequest = new Request('/api/chats/');
 
   fetch(dataRequest).then((response) => {
     return response.json();
@@ -24,10 +22,8 @@ const receiveMessages = messages => ({
   messages
 });
 
-export const getMessages = (chat_id) => dispatch => {
-  let dataRequest = new Request('http://localhost:5000/api/chats/' + chat_id, {
-    mode: 'cors'
-  });
+export const getMessages = (chatid) => dispatch => {
+  let dataRequest = new Request('/api/chats/' + chatid);
 
   fetch(dataRequest).then((response) => {
     return response.json();
