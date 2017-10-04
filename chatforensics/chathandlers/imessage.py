@@ -118,16 +118,19 @@ class iMessageHandler(SQLiteHandlerBase):
                 if not message["message_text"]:
                     continue
 
+                # Self message marking
+                is_from_me = False
+                if message["message_is_from_me"] == 1:
+                    is_from_me = True
+
                 # XXX/HACK Add argument to choose between dict and heavy objects later.
                 yield dict(
                     backend_type=BackendType.imessage,
                     backend_uid=message["message_guid"],
                     chat_id=self._get_chat(message["chat_guid"]).id,
-                    chat_user_id=self._get_chat_user(message["handle_id"]).id,
+                    chat_user_id=1 if is_from_me else self._get_chat_user(message["handle_id"]).id,
                     created_at=message_created_at,
                     content=message["message_text"],
                     raw_content=message["message_text"],
-                    extra_meta={
-                        "from_me": message["message_is_from_me"] == 1
-                    }
+                    extra_meta={}
                 )

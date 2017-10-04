@@ -1,9 +1,10 @@
 import enum
 
 class BackendType(enum.Enum):
-    imessage = 1
-    discord = 2
-    skype = 3
+    internal = 1
+    imessage = 2
+    discord = 3
+    skype = 4
 
 
 class ChatEventType(enum.Enum):

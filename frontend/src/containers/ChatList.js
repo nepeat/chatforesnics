@@ -1,8 +1,9 @@
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 
 import ReactTable from "react-table";
+import { withRouter } from 'react-router';
 
-export default class ChatList extends PureComponent {
+class ChatList extends PureComponent {
   constructor() {
     super();
 
@@ -25,9 +26,9 @@ export default class ChatList extends PureComponent {
   }
   render() {
     if (this.state.chats.length === 0) {
-      return <h1>Loading chats...</h1>;
+      return <h1>Loading</h1>;
     }
-    
+
     return (
       <div className='chats'>
         <ReactTable
@@ -50,8 +51,20 @@ export default class ChatList extends PureComponent {
               accessor: 'created'
             }
           ]}
+          getTrProps={(state, rowInfo, column, instance) => {
+            return {
+              onClick: (e, handleOriginal) => {
+                if (handleOriginal) {
+                  return handleOriginal();
+                }
+                this.props.history.push('/chat/' + rowInfo.original.id);
+              }
+            }
+          }}
         />;
       </div>
     );
   }
 }
+
+export default withRouter(ChatList);

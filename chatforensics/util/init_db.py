@@ -6,7 +6,8 @@ from alembic import command
 from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.orm.exc import NoResultFound
 
-from chatforensics.model import Base, engine, sm
+from chatforensics.model import Base, engine, sm, ChatUser
+from chatforensics.model.types import BackendType
 
 def init_db():
     print(os.path.dirname(os.path.realpath(__file__)) + "/../../alembic.ini")
@@ -20,6 +21,15 @@ def init_db():
 
     alembic_cfg = Config(os.path.dirname(os.path.realpath(__file__)) + "/../../alembic.ini")
     command.stamp(alembic_cfg, "head")
+
+    # Create self user
+    db = sm()
+    db.add(ChatUser(
+        backend_type=BackendType.internal,
+        backend_uid="self",
+        friendly_name="Self"
+    ))
+    db.commit()
 
 if __name__ == "__main__":
     init_db()

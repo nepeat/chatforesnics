@@ -5,7 +5,8 @@ import {
   Link
 } from 'react-router-dom';
 
-import ChatList from './components/chats.js';
+import ChatList from './containers/ChatList.js';
+import ChatView from './containers/ChatView.js';
 
 import 'react-table/react-table.css';
 import './App.css';
@@ -17,6 +18,7 @@ class App extends Component {
         <div className="app">
           <h1>viewapp</h1>
           <Route exact path="/" component={ChatList}/>
+          <Route exact path="/chat/:chat_id" component={ChatView}/>
         </div>
       </Router>
     );
