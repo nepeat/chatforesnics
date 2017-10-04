@@ -2,38 +2,19 @@ import React, { PureComponent } from 'react';
 
 import ReactTable from "react-table";
 import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
+
+import { getMessages } from '../actions';
 
 import Message from '../components/message.js'
 
 class ChatView extends PureComponent {
-  constructor() {
-    super();
-
-    this.state = {
-      data: []
-    };
-  }
-
   componentWillMount() {
-    var dataRequest = new Request("http://localhost:5000/api/chats/" + this.props.match.params.chat_id, {
-      mode: 'cors'
-    });
-    fetch(dataRequest).then((response) => {
-      return response.json();
-    }).then((response) => {
-      if (!response.messages) {
-        console.error("Could not fetch messages?");
-        console.error(response);
-        return;
-      }
-
-      this.setState({
-        data: response.messages
-      });
-    });
+    this.props.getMessages(this.props.match.params.chat_id);
   }
+
   render() {
-    if (this.state.data.length === 0) {
+    if (this.props.messages.length === 0) {
       return <h1>Loading</h1>;
     }
     
@@ -42,7 +23,7 @@ class ChatView extends PureComponent {
 
     return (
       <div className='messages'>
-        {this.state.data.map((message) => {
+        {this.props.messages.map((message) => {
           if (lastSender !== message.from) {
             lastSender = message.from;
             senderChange = true;
@@ -62,4 +43,9 @@ class ChatView extends PureComponent {
   }
 }
 
-export default ChatView;
+const mapStateToProps = state => state;
+
+export default withRouter(connect(
+  mapStateToProps,
+  { getMessages }
+)(ChatView));

@@ -1,0 +1,2 @@
+export const RECIEVE_CHATS = 'RECIEVE_CHATS';
+export const RECIEVE_MESSAGES = 'RECIEVE_MESSAGES';

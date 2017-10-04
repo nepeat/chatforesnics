@@ -2,37 +2,30 @@ import React, { PureComponent } from 'react';
 
 import ReactTable from "react-table";
 import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
+
+import { getChats } from '../actions';
 
 class ChatList extends PureComponent {
   constructor() {
     super();
-
-    this.state = {
-      chats: []
-    };
   }
 
   componentWillMount() {
-    var dataRequest = new Request("http://localhost:5000/api/chats/", {
-      mode: 'cors'
-    });
-    fetch(dataRequest).then((response) => {
-      return response.json();
-    }).then((response) => {
-      this.setState({
-        chats: response.chats
-      });
-    });
+    if (this.props.chats.length === 0) {
+      this.props.getChats();
+    }
   }
+
   render() {
-    if (this.state.chats.length === 0) {
+    if (this.props.chats.length === 0) {
       return <h1>Loading</h1>;
     }
 
     return (
       <div className='chats'>
         <ReactTable
-          data={this.state.chats}
+          data={this.props.chats}
           columns={[
             {
               Header: 'ID',
@@ -67,4 +60,9 @@ class ChatList extends PureComponent {
   }
 }
 
-export default withRouter(ChatList);
+const mapStateToProps = state => state;
+
+export default withRouter(connect(
+  mapStateToProps,
+  { getChats }
+)(ChatList));
