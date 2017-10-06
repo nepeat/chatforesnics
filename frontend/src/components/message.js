@@ -1,17 +1,21 @@
 import React from 'react';
 
-import './message.css';
+import MessageSender from './MessageSender';
 
-export default ({ message, senderChange, lastSender }) => {
+import './Message.css';
+
+const Message = ({ message, senderChange, lastSender, _key, dispatch }) => {
   let prependedExtras = [];
 
   if (senderChange) {
-    prependedExtras.push(<h1 className='sender'>{lastSender}</h1>);
+    prependedExtras.push(<MessageSender key={'sender_' + lastSender} lastSender={lastSender}/>);
   }
 
-  return <div className='message'>
+  return <div className='message' key={_key}>
     {prependedExtras}
     <span className='created'>{message.created}</span>
     <span className='content'>{message.content}</span>
   </div>;
 };
+
+export default Message;

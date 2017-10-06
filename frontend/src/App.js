@@ -5,10 +5,12 @@ import {
   Link
 } from 'react-router-dom';
 
-import ChatList from './containers/ChatList.js';
-import ChatView from './containers/ChatView.js';
+import ChatListContainer from './containers/ChatListContainer.js';
+import ChatViewContainer from './containers/ChatViewContainer.js';
 
+import 'purecss';
 import 'react-table/react-table.css';
+import 'react-vis/dist/style.css';
 import './App.css';
 
 class App extends Component {
@@ -16,9 +18,10 @@ class App extends Component {
     return (
       <Router>
         <div className="app">
-          <h1>viewapp</h1>
-          <Route exact path="/" component={ChatList}/>
-          <Route exact path="/chat/:chat_id" component={ChatView}/>
+          <h1 className="d-inline"><Link to="/">viewapp</Link></h1>
+          <input className="float-right" type="text" placeholder="Shame yourself..."/>
+          <Route exact path="/" component={ChatListContainer}/>
+          <Route exact path="/chat/:chat_id" component={ChatViewContainer}/>
         </div>
       </Router>
     );

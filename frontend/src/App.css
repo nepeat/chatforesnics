@@ -1,3 +1,11 @@
 .app {
   padding: 0 50px;
 }
+
+.d-inline {
+  display: inline-block;
+}
+
+.float-right {
+  float: right;
+}

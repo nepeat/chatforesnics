@@ -16,3 +16,7 @@ const messages = (state = initialState, action) => {
 };
 
 export default messages;
+
+export const getMessagesState = (state) => {
+  return state.messages;
+};

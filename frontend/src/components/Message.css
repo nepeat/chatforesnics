@@ -5,3 +5,7 @@
 .message .created {
     margin-right: 5px;
 }
+
+.message .sender {
+    margin-bottom: 5px;
+}

@@ -8,6 +8,7 @@ import { createLogger } from 'redux-logger';
 
 import './index.css';
 
+import { getChats } from './actions';
 import reducer from './reducers';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
@@ -22,6 +23,8 @@ const store = createStore(
   reducer,
   composeEnhancers(applyMiddleware(...middleware))
 );
+
+store.dispatch(getChats());
 
 ReactDOM.render(
   <Provider store={store}>
